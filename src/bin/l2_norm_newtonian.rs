@@ -1,3 +1,5 @@
+mod correlation;
+
 struct Vector {
     values: Vec<f64>,
 }
