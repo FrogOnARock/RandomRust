@@ -1,3 +1,6 @@
+use std::char::MAX;
+use std::cmp;
+
 
 struct Vector {
     values: Vec<f64>
@@ -18,6 +21,9 @@ struct Correlation {
 struct Mean {
     value: f64
 }
+
+const REL_EPS: f64 = f64::EPSILON;
+const MIN_STDDEV: f64 = 1e-12;
 
 
 impl Vector {
@@ -83,20 +89,30 @@ impl Vector {
         } else if (self.values.len() < 2) || (other.values.len() < 2) {
             return Err("Correlation is not defined for vectors of length < 2");
         } else {
+            let var = self.variance().value;
+            let other_var = other.variance().value;
+            let cov = self.covariance(&other).value;
+            let denom = (var * other_var).sqrt();
+            let rel_max: f64 = REL_EPS * denom;
+
+            if denom < f64::max(rel_max, MIN_STDDEV) {
+                return Err("Vectors are too close to each other to calculate correlation");
+            }
+
             Ok(
                 Correlation {
                     value:
-                    self.covariance(&other).value
-                        / ((self.variance().value * other.variance().value).sqrt())
+                    cov
+                        / ((var * other_var).sqrt())
                 }
             )
         }
+
     }
 }
 
-
 fn main () {
     let v1 = Vector { values: vec![1.0, 2.0, 3.0] };
-    let v2 = Vector { values: vec![2.0, 4.0, 6.0] };
+    let v2 = Vector { values: vec![3.5, 4.8, 1.0] };
     println!("{}", v1.correlation(&v2).unwrap().value);
 }
