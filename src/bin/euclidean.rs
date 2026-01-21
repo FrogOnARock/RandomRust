@@ -23,7 +23,8 @@ impl Vector {
             value: self.values.iter()
                 .zip(other.values.iter())
                 .map(|(x, y)| (x-y).powi(2))
-                .sum()
+                .sum::<f64>()
+                .sqrt()
 
         })
 
