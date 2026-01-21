@@ -12,6 +12,19 @@ impl Vector {
         Vector { values }
     }
 }
+
+impl Distance {
+    fn new(value: f64) -> Result<Distance, &'static str> {
+
+        if !value.is_finite() || value < 0.0 {
+            return Err("Distance must be positive");
+        }
+
+        Ok ( Distance { value })
+
+    }
+}
+
 impl Vector {
     fn euclidean_distance(&self, other: &Vector) -> Result<Distance, &'static str> {
 
@@ -19,14 +32,14 @@ impl Vector {
             return Err("Vectors must be of the same length");
         }
 
-        Ok (Distance {
-            value: self.values.iter()
+        Ok ( Distance::new (
+                self.values.iter()
                 .zip(other.values.iter())
                 .map(|(x, y)| (x-y).powi(2))
                 .sum::<f64>()
                 .sqrt()
-
-        })
+            )?
+        )
 
     }
 }
