@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 num-complex = "0.4"
 rand = "0.8"
+log = "0.4.29"
